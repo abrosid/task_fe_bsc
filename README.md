@@ -6,6 +6,7 @@
 
 
 2. App dependencies
+
 `bower install`
 
 
