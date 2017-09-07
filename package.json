@@ -1,0 +1,24 @@
+{
+  "name": "task_fe_bsc",
+  "version": "1.0.0",
+  "description": "tast FE BSC",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.15.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abrosid/task_fe_bsc.git"
+  },
+  "author": "Abror Siddikov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/abrosid/task_fe_bsc/issues"
+  },
+  "homepage": "https://github.com/abrosid/task_fe_bsc#readme"
+}
