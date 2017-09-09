@@ -1,26 +1,35 @@
-
-<h1>{{ 'POSTS' | translate }}</h1>
-<div class="input-group">
-    <div class="input-group-btn">
-        <a href="#!/create" class="btn btn-primary" ng-click="create()"><i class="glyphicon glyphicon-plus"></i></a>
+<div class="navbar">
+    <div class="navbar-header">
+        <div class="navbar-brand  {{info.type}">{{ 'POSTS' | translate }}</div>
     </div>
-    <input type="search" class="form-control" placeholder="{{ 'SEARCH'|translate }}" ng-model="q">
-    <div class="input-group-btn">
-        <button class="btn btn-default" ng-click="q=''"><i class="glyphicon" ng-class="{'glyphicon-remove':q, 'glyphicon-search':!q}"></i></button>
+    <div class="navbar-form navbar-right">
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <a ui-sref="create" class="btn btn-primary" ng-click="create()"><i class="glyphicon glyphicon-plus"></i> {{ 'CREATE'|translate }}</a>
+                </div>
+                <input type="search" class="form-control" placeholder="{{ 'SEARCH'|translate }}" ng-model="q">
+                <div class="input-group-btn">
+                    <button class="btn btn-default" ng-click="q=''"><i class="glyphicon" ng-class="{'glyphicon-remove':q, 'glyphicon-search':!q}"></i></button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<hr>
 <div class="panel panel-default" ng-repeat="post in posts| filter:q">
     <div class="panel-heading text-bold">
         <h4>
-            <a href="#!/post/{{post.id}}">
+            <a ui-sref="post({ id: post.id })">
                 <strong class="text-uppercase">{{post.title}}</strong>
             </a>
         </h4>
     </div>
     <div class="panel-body">{{post.body}}</div>
-    <div class="panel-footer">
-        <a href="#!/post/{{post.id}}" class="btn btn-info"><span class="glyphicon glyphicon-eye-open"></span> {{ 'READ'|translate }}</a>
-        <button ng-click="delete(post.id)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span> {{ 'DELETE'|translate }}</button>
+    <div class="panel-footer text-right">
+        <div class="btn-group">
+            <a ui-sref="post({ id: post.id })" class="btn btn-info"><span class="glyphicon glyphicon-eye-open"></span> {{ 'READ'|translate }}</a>
+            <a ui-sref="edit({ id: post.id })" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> {{ 'EDIT'|translate }}</a>
+            <button ng-click="delete(post.id)" class="btn btn-danger pull-right"><span class="glyphicon glyphicon-trash"></span> {{ 'DELETE'|translate }}</button>
+        </div>
     </div>
 </div>

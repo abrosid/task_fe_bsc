@@ -1,34 +1,11 @@
 <nav class="navbar">
-    <a href="#!/posts" class="btn btn-default navbar-btn" ng-click="edit()"><span class="glyphicon glyphicon-chevron-left"></span> {{ 'BACK'|translate }}</a>
+    <a ui-sref="posts" class="btn btn-default navbar-btn" ng-click="edit()"><span class="glyphicon glyphicon-chevron-left"></span> {{ 'BACK'|translate }}</a>
+    <div class="btn-group pull-right">
+        <a ui-sref="edit({ id: post.id })" class="btn btn-primary navbar-btn" ng-click="edit()"><span class="glyphicon glyphicon-pencil"></span> {{ 'EDIT'|translate }}</a>
+        <button class="btn btn-danger navbar-btn pull-right" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span> {{ 'DELETE'|translate }}</button>
+    </div>
 </nav>
-<div ng-switch="action">
-    <div ng-switch-default>
-        <h2>{{post.title}}</h2>
-        <div>
-            {{post.body}}
-        </div>
-        <p></p>
-        <nav class="navbar">
-            <button class="btn btn-primary navbar-btn" ng-click="edit()"><span class="glyphicon glyphicon-pencil"></span> {{ 'EDIT'|translate }}</button>
-            <button class="btn btn-danger navbar-btn pull-right" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span> {{ 'DELETE'|translate }}</button>
-        </nav>
-    </div>
-    <div ng-switch-when="edit">
-        <form class="form" ng-submit="update()">
-            <div class="form-group">
-                <label class="control-label" for="title">{{ 'TITLE'|translate }}:</label>
-                <input type="text" required class="form-control" id="title" placeholder="{{ 'ENTER_TITLE'|translate }}" ng-model="post.title">
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="body">{{ 'BODY'|translate }}:</label>
-                <textarea rows="8" class="form-control" id="body" placeholder="{{ 'ENTER_BODY'|translate }}" ng-model="post.body">
-                   {{post.body}} 
-                        </textarea>
-            </div>
-            <div class="form-group">
-                <button type="reset" class="btn btn-default" ng-click="cancel()"><span class="glyphicon glyphicon-chevron-left"></span> {{ 'CANCEL'|translate }}</button>
-                <button type="submit" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-ok-sign"></span> {{ 'UPDATE'|translate }}</button>
-            </div>
-        </form>
-    </div>
-</div>
+<h2>{{post.title}}</h2>
+<article>
+    {{post.body}}
+</article>

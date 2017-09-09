@@ -1,6 +1,7 @@
-var app = angular.module('test', ['ngRoute', 'pascalprecht.translate', 'ngResource'])
-    .config(['$routeProvider', '$translateProvider', '$resourceProvider', 'LANG',
-        function ($routeProvider, $translateProvider, $resourceProvider, LANG) {
+var app = angular.module('test', ['ui.router', 'pascalprecht.translate', 'ngResource'])
+    .config(['$locationProvider', '$urlRouterProvider', '$stateProvider', '$translateProvider', '$resourceProvider', 'LANG',
+        function ($locationProvider, $urlRouterProvider, $stateProvider, $translateProvider, $resourceProvider, LANG) {
+            $locationProvider.hashPrefix('');
             $resourceProvider.defaults.stripTrailingSlashes = false;
             $resourceProvider.defaults.actions = {
                 create: { method: 'POST' },
@@ -9,20 +10,32 @@ var app = angular.module('test', ['ngRoute', 'pascalprecht.translate', 'ngResour
                 update: { method: 'PUT' },
                 delete: { method: 'DELETE' }
             };
-            $routeProvider
-                .when('/posts', {
-                    templateUrl: 'app/templates/posts.html',
-                    controller: 'PostsCtrl'
+
+            $stateProvider
+                .state({
+                    name: 'posts',
+                    url: "/posts",
+                    component: 'postList'
                 })
-                .when('/post/:id', {
-                    templateUrl: 'app/templates/post.html',
-                    controller: 'PostCtrl'
+                .state({
+                    name: 'post',
+                    url: "/post/:id",
+                    component: 'postItem'
+
                 })
-                .when('/create', {
-                    templateUrl: 'app/templates/create.html',
-                    controller: 'NewPost'
+                .state({
+                    name: 'create',
+                    url: "/create",
+                    component: 'postForm'
+
                 })
-                .otherwise('posts');
+                .state({
+                    name: 'edit',
+                    url: "/edit/:id",
+                    component: 'postEdit'
+
+                });
+            $urlRouterProvider.otherwise('/posts');
 
             $translateProvider
                 .translations('en', LANG.EN)
@@ -30,7 +43,22 @@ var app = angular.module('test', ['ngRoute', 'pascalprecht.translate', 'ngResour
                 .preferredLanguage('en')
                 .useSanitizeValueStrategy('escape');
         }])
-    .controller('MainCtrl', ['$rootScope', '$translate', '$timeout',
+    .component('postList', {
+        templateUrl: 'app/templates/posts.html',
+        controller: 'PostsCtrl'
+    })
+    .component('postItem', {
+        templateUrl: 'app/templates/post.html',
+        controller: 'PostCtrl'
+    })
+    .component('postForm', {
+        templateUrl: 'app/templates/create.html',
+        controller: 'NewPost'
+    })
+    .component('postEdit', {
+        templateUrl: 'app/templates/edit.html',
+        controller: 'PostCtrl'
+    }).controller('MainCtrl', ['$rootScope', '$translate', '$timeout',
         function NotesCtrl($rootScope, $translate, $timeout) {
             $rootScope.title = 'Posts';
             $rootScope.lang = 'en';
@@ -147,23 +175,16 @@ var app = angular.module('test', ['ngRoute', 'pascalprecht.translate', 'ngResour
                 });
             };
         }])
-    .controller('PostCtrl', ['$routeParams', '$scope', '$rootScope', '$location', '$translate', 'PostFactory',
-        function PostCtrl($routeParams, $scope, $rootScope, $location, $translate, PostFactory) {
-            $scope.post = PostFactory.getPost($routeParams.id);
+    .controller('PostCtrl', ['$stateParams', '$scope', '$rootScope', '$state', '$translate', 'PostFactory',
+        function PostCtrl($stateParams, $scope, $rootScope, $state, $translate, PostFactory) {
+            $scope.post = PostFactory.getPost($stateParams.id);
             if (!$scope.post) {
-                PostFactory.read($routeParams.id).then(function (res) {
+                PostFactory.read($stateParams.id).then(function (res) {
                     $scope.post = res;
                 }, function (err) {
-                    $location.path('/posts');
+                    $state.go('posts');
                 })
             }
-            $scope.action = null;
-            $scope.edit = function () {
-                $scope.action = 'edit';
-            };
-            $scope.cancel = function () {
-                $scope.action = null;
-            };
             $scope.update = function () {
                 $scope.pending = true;
                 PostFactory.update($scope.post)
@@ -174,45 +195,47 @@ var app = angular.module('test', ['ngRoute', 'pascalprecht.translate', 'ngResour
                             type: 'alert-success',
                             text: 'UPDATE_SUCCESS'
                         };
+                        $state.go('post', { id: $stateParams.id });
                     }, function (err) {
                         $scope.action = null;
                         $rootScope.info = {
                             type: 'alert-danger',
                             text: 'UPDATE_ERROR'
                         };
+                        $state.go('post', { id: $stateParams.id });
                     });
             };
             $scope.delete = function () {
                 $translate('CONFIRM_DELETE').then(function (txt) {
                     if (confirm(txt)) {
                         $scope.pending = true;
-                        PostFactory.delete($routeParams.id).then(function (res) {
+                        PostFactory.delete($stateParams.id).then(function (res) {
                             $scope.pending = false;
                             $scope.action = null;
                             $scope.post = res;
-                            PostFactory.completeDelete($routeParams.id);
+                            PostFactory.completeDelete($stateParams.id);
                             $rootScope.info = {
                                 type: 'alert-success',
                                 text: 'DELETE_SUCCESS'
                             };
-                            $location.path('/posts');
+                            $state.go('posts');
                         }, function (err) {
                             $scope.pending = false;
                             alert(err.statusText);
-                            PostFactory.completeDelete($routeParams.id);
+                            PostFactory.completeDelete($stateParams.id);
                             $rootScope.info = {
                                 type: 'alert-danger',
                                 text: 'DELETE_ERROR'
                             };
-                            $location.path('/posts');
+                            $state.go('post', { id: $stateParams.id });
                         });
                     }
                 });
 
             };
         }])
-    .controller('NewPost', ['$scope', '$rootScope', '$location', '$translate', 'PostFactory',
-        function NewPost($scope, $rootScope, $location, $translate, PostFactory) {
+    .controller('NewPost', ['$scope', '$rootScope', '$state', '$translate', 'PostFactory',
+        function NewPost($scope, $rootScope, $state, $translate, PostFactory) {
             $scope.post = {
                 id: null,
                 title: '',
@@ -220,7 +243,7 @@ var app = angular.module('test', ['ngRoute', 'pascalprecht.translate', 'ngResour
                 userId: null
             };
             $scope.cancel = function () {
-                $location.path('/posts');
+                $state.go('posts');
             };
             $scope.create = function () {
                 PostFactory.create($scope.post).then(function (res) {
@@ -230,7 +253,7 @@ var app = angular.module('test', ['ngRoute', 'pascalprecht.translate', 'ngResour
                         type: 'alert-success',
                         text: 'CREATE_SUCCESS'
                     };
-                    $location.path('/post/' + $scope.post.id);
+                    $state.go('post', { id: $scope.post.id });
                 }, function (err) {
                     $rootScope.info = {
                         type: 'alert-danger',
