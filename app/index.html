@@ -1,29 +1,32 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Notes</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <script src="lib/angular/angular.min.js" type="text/javascript"></script>
-        <script src="lib/angular-route/angular-route.min.js" type="text/javascript"></script>
-        <script src="lib/angular-translate/angular-translate.min.js" type="text/javascript"></script>
+<html ng-app="test">
 
-    </head>
-    <body ng-app="test" ng-controller="MainCtrl">
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#!/posts">{{ 'PAGE'|translate }}</a>
-                </div>
-                <div class="navbar-form navbar-right">
-                    <button class="btn btn-default" ng-click="cz()" ng-hide="lang == 'cz'">CZ</button>
-                    <button class="btn btn-default" ng-click="en()" ng-hide="lang == 'en'">EN</button>
-                </div>
-            </div>
+<head>
+    <title>Notes</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="lib/angular/angular.min.js" type="text/javascript"></script>
+    <script src="lib/angular-route/angular-route.min.js" type="text/javascript"></script>
+    <script src="lib/angular-resource/angular-resource.min.js" type="text/javascript"></script>
+    <script src="lib/angular-translate/angular-translate.min.js" type="text/javascript"></script>
+
+</head>
+<body ng-controller="MainCtrl">
+    <div class="container">
+        <nav class="navbar navbar-inverse">
+            <a class="btn navbar-btn btn-link pull-left text-uppercase" href="#!/posts">
+               <span class="glyphicon glyphicon-home"></span> {{ 'HOME'|translate }}
+            </a>
+            <button class="btn btn-link navbar-btn pull-right" ng-click="cz()" ng-hide="lang == 'cz'">Česky</button>
+            <button class="btn btn-link navbar-btn pull-right" ng-click="en()" ng-hide="lang == 'en'">English</button>
         </nav>
+        <div class="alert {{info.type}}" ng-show="info">
+            {{ info.text | translate }}
+        </div>
         <div ng-view></div>
+    </div>
+    <script src="app/js/app.js" type="text/javascript"></script>
+</body>
 
-        <script src="app/js/app.js" type="text/javascript"></script>
-    </body>
 </html>
