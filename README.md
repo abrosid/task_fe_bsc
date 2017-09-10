@@ -20,4 +20,4 @@ or
 
 `npm start`
 
-
+App is available in `http://localhost:9000` on browser.
