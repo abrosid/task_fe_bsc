@@ -12,6 +12,6 @@
 
 3. Running server (localhost:9000)
 
-`node server.js`
+`node server.js` or `npm start`
 
 
